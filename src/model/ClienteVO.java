@@ -5,8 +5,7 @@ import java.util.List;
 public class ClienteVO {
     public int id_cliente;
     public Endereco endereco;
-    public String nome;
-    public String sobrenome;
+    public String nome_completo;
     public String cpf;
     public String data_nascimento;
 
@@ -16,8 +15,7 @@ public class ClienteVO {
     public ClienteVO(
         int id_cliente,
         Endereco endereco,
-        String nome,
-        String sobrenome,
+        String nome_completo,
         String cpf,
         String data_nascimento, 
         List<String> emails, 
@@ -25,8 +23,7 @@ public class ClienteVO {
     ) {
         this.id_cliente = id_cliente;
         this.endereco = endereco;
-        this.nome = nome;
-        this.sobrenome = sobrenome;
+        this.nome_completo = nome_completo;
         this.cpf = cpf;
         this.data_nascimento = data_nascimento;
         this.emails = emails;
@@ -35,8 +32,7 @@ public class ClienteVO {
 ;
     public int getId() { return id_cliente; }
     public Endereco getEndereco() { return this.endereco; }
-    public String getNome() { return nome; }
-    public String getSobrenome() { return sobrenome; }
+    public String getNome() { return nome_completo; }
     public String getCpf() { return cpf; }
     public String getData_nascimento() { return data_nascimento; }
     public List<String> getEmails(){ return this.emails; }
@@ -46,11 +42,11 @@ public class ClienteVO {
     public String toString(){
         return String.format(
             "=== CLIENTE [#%d] ===\n" +
-            "Nome: %s %s | CPF: %s | Nascimento: %s\n" +
+            "Nome: %s | CPF: %s | Nascimento: %s\n" +
             "Contatos: %s | E-mails: %s\n" +
             "Endereço: %s\n" +
             "========================",
-            id_cliente, nome, sobrenome, cpf, data_nascimento,
+            id_cliente, nome_completo, cpf, data_nascimento,
             ((emails != null && !emails.isEmpty()) ? String.join(", ", emails) : "Nenhum e-mail"),
             ((telefones != null && !telefones.isEmpty()) ? String.join(", ", telefones) : "Nenhum telefone"),   
             ((endereco != null) ? endereco.toString() : "Endereço não cadastrado")

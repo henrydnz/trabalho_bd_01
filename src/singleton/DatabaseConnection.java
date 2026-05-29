@@ -2,7 +2,6 @@ package singleton;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.Statement;
 
 public class DatabaseConnection {
     private static DatabaseConnection instance = null;
@@ -16,7 +15,6 @@ public class DatabaseConnection {
     }
 
     private Connection conn = null;
-    private Statement stmt = null;
 
     public void connect(){
         String host = "sql10.freesqldatabase.com";
@@ -41,27 +39,17 @@ public class DatabaseConnection {
 
                 conn = DriverManager.getConnection(db_connect_string, user, password);
 
-                if(!conn.isClosed()) {
-                    stmt = conn.createStatement();
+                if(!conn.isClosed()) 
                     System.out.println("conectado com sucesso.");
-                }
+                
             } catch(Exception e){
                 System.err.println("erro ao conectar:");
                 e.printStackTrace();
             }
     }
 
-    public Statement getStatement(){
-        if(conn==null) connect();
-        return stmt;
-    }
-
     public Connection getConnection(){
         if(this.conn == null) connect();
         return this.conn;
-    }
-
-    public static void main(String[] args){
-        DatabaseConnection.getInstance().connect();
     }
 }
