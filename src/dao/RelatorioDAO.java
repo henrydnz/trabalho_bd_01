@@ -17,8 +17,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 public class RelatorioDAO {
-    private ResultSet select(String target, String param, int id){
-        Connection conn = DatabaseConnection.getInstance().getConnection();
+    private static Connection conn = DatabaseConnection.getInstance().getConnection();
+
+    private static ResultSet select(String target, String param, int id){
         String sql = "SELECT * FROM " + target + " WHERE " + param + " = ?";
         ResultSet rs = null;
 
@@ -33,7 +34,7 @@ public class RelatorioDAO {
         return rs;
     }
 
-    public ContaVO getContaByID(int id_conta) {
+    public static ContaVO getContaByID(int id_conta) {
         ContaVO conta = null;
 
         ResultSet rs = select("vw_Resumo_Contas", "id_Conta", id_conta);
@@ -63,6 +64,8 @@ public class RelatorioDAO {
                     ag,
                     titular
                 );
+            } else {
+                System.err.println("Nenhuma conta cadastrada com esse ID!");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -71,7 +74,7 @@ public class RelatorioDAO {
         return conta;
     }
 
-    public ClienteVO getClienteByID(int id_cliente) {
+    public static ClienteVO getClienteByID(int id_cliente) {
         ClienteVO cliente = null;
 
         ResultSet rsPerfil = select("vw_Perfil_Cliente", "id_cliente", id_cliente);
@@ -114,6 +117,8 @@ public class RelatorioDAO {
                     emails,
                     telefones
                 );
+            } else {
+                System.err.println("Nenhum cliente cadastrado com esse ID!");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -122,7 +127,7 @@ public class RelatorioDAO {
         return cliente;
     }
 
-    public List<TransferenciasVO> getTransacoesByClienteID(int id_cliente){
+    public static List<TransferenciasVO> getTransferenciasByClienteID(int id_cliente){
         List<TransferenciasVO> transferencias = new ArrayList<>();
         
         ResultSet rs = select("vw_Extrato_Conta", "id_cliente", id_cliente);
@@ -153,7 +158,7 @@ public class RelatorioDAO {
         return transferencias;
     }
 
-    public List<InvestimentosVO> getInvestimentosByClienteID(int id_cliente){
+    public static List<InvestimentosVO> getInvestimentosByClienteID(int id_cliente){
         List<InvestimentosVO> investimentos = new ArrayList<>();
 
         ResultSet rs = select("vw_Investimentos_Ativos", "id_Cliente", id_cliente);
@@ -182,6 +187,33 @@ public class RelatorioDAO {
         }
 
         return investimentos;
+    }
+
+    public static void main(String[] args) {
+        // TODO: resolver bug da conta e melhorar toString views. 
+        
+        int id_cliente = 1;
+        System.out.println("teste cliente id_cliente="+id_cliente);
+        System.out.println();
+        System.out.println(getClienteByID(id_cliente)+"\n");
+        
+        int id_conta = 1;
+        System.out.println("teste contna id_conta="+id_conta);
+        System.out.println();
+        System.out.println(getContaByID(id_conta)+"\n");
+
+        System.out.println("teste transferencias id_cliente="+id_cliente);
+        System.out.println();
+        List<TransferenciasVO> transferencias = getTransferenciasByClienteID(id_cliente);
+        for(TransferenciasVO t : transferencias)
+            System.out.println(t);
+        System.out.println();
+
+        System.out.println("teste investimentos id_cliente="+id_cliente);
+        System.out.println();
+        List<InvestimentosVO> investimentos = getInvestimentosByClienteID(id_cliente);
+        for(InvestimentosVO i : investimentos)
+            System.out.println(i);
     }
 
 }

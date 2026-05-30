@@ -36,15 +36,12 @@ public class InvestimentosVO {
 
     @Override
     public String toString(){
-        return String.format("%s: %s - %s | %s -> %s (%s)", 
+        return String.format("%s - %s | %s -> %s (%s)", 
             this.tipo,
-            (is_ativo ? "Ativo" : "Encerrado"),
-            (is_ativo ? 
-                String.format("Desde %s", valor_inicial) : 
-                String.format("De %s a %s", data_inicial, data_encerramento)),
+            String.format("Desde %s", data_inicial),
             String.format("R$ %.2f", valor_inicial),
             String.format("R$ %.2f", valor_atual),
-            String.format("%+.2f", (valor_inicial > 0 ? ((valor_atual - valor_inicial) / valor_inicial) * 100 : 0))
+            String.format("%+.2f%", (valor_inicial > 0 ? ((valor_atual - valor_inicial) / valor_inicial) * 100 : 0))
         );
     }
 }

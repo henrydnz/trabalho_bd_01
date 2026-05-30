@@ -5,6 +5,18 @@ import java.sql.DriverManager;
 
 public class DatabaseConnection {
     private static DatabaseConnection instance = null;
+    private static final String host = "sql10.freesqldatabase.com";
+    private static final String port = "3306";
+    private static final String db_name = "sql10828677";
+    private static final String user = "sql10828677";
+    private static final String password = "xeNnJBxDck";
+    private static final String db_connect_string = "jdbc:mysql://" + host + ":" + port + "/" + db_name + 
+            "?verifyServerCertificate=false" +
+            "&useSSL=false" +
+            "&requireSSL=false" +
+            "&useTimezone=true" +
+            "&serverTimezone=UTC" +
+            "&allowPublicKeyRetrieval=true";
 
     private DatabaseConnection(){}
 
@@ -17,35 +29,17 @@ public class DatabaseConnection {
     private Connection conn = null;
 
     public void connect(){
-        String host = "sql10.freesqldatabase.com";
-        String port = "3306";
-        String db_name = "sql10828677";
-        String user = "sql10828677";
-        String password = "xeNnJBxDck";
-
-
-        String db_connect_string = "jdbc:mysql://" + host + ":" + port + "/" + db_name + 
-            "?verifyServerCertificate=false" +
-            "&useSSL=false" +
-            "&requireSSL=false" +
-            "&useTimezone=true" +
-            "&serverTimezone=UTC" +
-            "&allowPublicKeyRetrieval=true";
+        System.out.println("EXECUTANDO CONEXAO COM O BANCO DE DADOS...\n");
         
-            try{
-                Class.forName("com.mysql.cj.jdbc.Driver");
-
-                if(this.conn != null) this.conn.close();
-
-                conn = DriverManager.getConnection(db_connect_string, user, password);
-
-                if(!conn.isClosed()) 
-                    System.out.println("conectado com sucesso.");
-                
-            } catch(Exception e){
-                System.err.println("erro ao conectar:");
-                e.printStackTrace();
-            }
+        try{
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            if(this.conn != null) this.conn.close();
+            conn = DriverManager.getConnection(db_connect_string, user, password);
+            System.out.println("STATUS DA CONEXAO: " + (conn.isClosed() ? "FALHA" : "CONECTADO") + "\n");
+        } catch(Exception e){
+            System.err.println("erro ao conectar:");
+            e.printStackTrace();
+        }
     }
 
     public Connection getConnection(){

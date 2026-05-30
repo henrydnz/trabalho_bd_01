@@ -48,15 +48,12 @@ public class TransferenciasVO {
 
     @Override
     public String toString(){
-        boolean pagou = this.valor < 0;
-
-        return String.format("[%s] %s (%s) | %s %s | %s: %s (CPF: %s)",
+        return String.format("[%s] %s | %s %s | %s: %s (CPF: %s)",
             this.data,
             this.tipo_transferencia,
-            (this.is_credito ? "Crédito" : "Débito"),
-            (pagou ? "Pagou" : "Recebeu"),
+            (this.is_credito ? "+" : "-"),
             String.format("R$ %.2f", Math.abs(this.valor)),
-            (pagou ? "Destino" : "Origem"),
+            (this.is_credito ? "Destino" : "Origem"),
             this.nome_complementar, 
             this.cpf_complementar
         );
