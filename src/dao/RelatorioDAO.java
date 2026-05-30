@@ -8,6 +8,7 @@ import model.TransferenciasVO;
 import model.InvestimentosVO;
 import model.Endereco;
 import model.Agencia;
+import model.Banco;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,12 +47,21 @@ public class RelatorioDAO {
 
         try {
             if(rs.next()){
+                int id_agencia = rs.getInt("id_Agencia");
+                
+                Banco banco = new Banco(
+                    rs.getString("nome_Banco"),
+                    rs.getString("CNPJ_Banco")
+                );
+
                 Agencia ag = new Agencia(
-                    rs.getInt("id_Agencia"), 
-                    null, 
-                    rs.getBoolean("Agencia_Digital"), 
+                    id_agencia,
+                    banco, 
+                    rs.getBoolean("is_Virtual"), 
                     null
                 );
+
+
 
                 ClienteVO titular = new ClienteVO(
                     0, null, 
@@ -190,14 +200,16 @@ public class RelatorioDAO {
     }
 
     public static void main(String[] args) {
-        // TODO: resolver bug da conta e melhorar toString views. 
-        
+        // TODO: melhorar toString views
+        // TODO: getTransferenciasByClienteID -> getTransferenciasByContaID
+        // TODO: getInvestimentosByClienteID -> getInvestimentosByContaID
+
         int id_cliente = 1;
         System.out.println("teste cliente id_cliente="+id_cliente);
         System.out.println();
         System.out.println(getClienteByID(id_cliente)+"\n");
         
-        int id_conta = 1;
+        int id_conta = 101;
         System.out.println("teste contna id_conta="+id_conta);
         System.out.println();
         System.out.println(getContaByID(id_conta)+"\n");

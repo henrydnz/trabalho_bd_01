@@ -41,7 +41,7 @@ public class InvestimentosVO {
             String.format("Desde %s", data_inicial),
             String.format("R$ %.2f", valor_inicial),
             String.format("R$ %.2f", valor_atual),
-            String.format("%+.2f%", (valor_inicial > 0 ? ((valor_atual - valor_inicial) / valor_inicial) * 100 : 0))
+            String.format("%+.2f" + "%", (valor_inicial > 0 ? ((valor_atual - valor_inicial) / valor_inicial) * 100 : 0))
         );
     }
 }

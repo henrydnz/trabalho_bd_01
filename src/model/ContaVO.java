@@ -29,10 +29,17 @@ public class ContaVO {
             "Cliente não informado" :
             cliente.getNome() + " (CPF: " + cliente.getCpf() + ")";
         
-        String ag = (agencia != null) ? "Ag. " + agencia.getId() : "Ag. Desconhecida";
-        String bc = (agencia != null) ? agencia.getBanco().getNome() : "Banco Desconhecido";
+        String ag;
+        String bc;
+        if (agencia != null){
+            ag = String.format("%d", agencia.getId());
+            bc = agencia.getBanco().getNome() + " (CNPJ: " + agencia.getBanco().getCnpj() + ")";
+        } else {
+            ag = "Desconhecida";
+            bc = "Banco Desconhecido";
+        }
 
-        return String.format("Conta: %05d | %s - %s | Titular: %s | Saldo Disponível: %s",
+        return String.format("Conta: %05d | %s - Agência: %s\nTitular: %s | Saldo Disponível: %s",
             id_conta, bc, ag, titular, String.format("R$ %.2f", saldo)
         );
     }
