@@ -2,18 +2,14 @@ package model;
 
 public class TransferenciasVO {
     ContaVO conta;
-
     String tipo_transferencia;
     boolean is_credito;
-    
     String complemento;
     String data;
-    
     float valor;
-
     String nome_complementar;
     String cpf_complementar;
-    Agencia agencia_complementar;
+    // Agencia agencia_complementar;
 
     public TransferenciasVO(
         ContaVO conta, 
@@ -23,8 +19,8 @@ public class TransferenciasVO {
         String data,
         float valor,
         String nome_complementar,
-        String cpf_complementar,
-        Agencia agencia_complementar
+        String cpf_complementar 
+        //Agencia agencia_complementar
     ) {
         this.conta = conta;
         this.tipo_transferencia = tipo_transferencia;
@@ -34,7 +30,7 @@ public class TransferenciasVO {
         this.valor = valor;
         this.nome_complementar = nome_complementar;
         this.cpf_complementar = cpf_complementar;
-        this.agencia_complementar = agencia_complementar;
+        // this.agencia_complementar = agencia_complementar;
     }
 
     public ContaVO getConta(){ return this.conta; }
@@ -48,14 +44,10 @@ public class TransferenciasVO {
 
     @Override
     public String toString(){
-        return String.format("[%s] %s | %s %s | %s: %s (CPF: %s)",
-            this.data,
-            this.tipo_transferencia,
-            (this.is_credito ? "+" : "-"),
-            String.format("R$ %.2f", Math.abs(this.valor)),
-            (this.is_credito ? "Destino" : "Origem"),
-            this.nome_complementar, 
-            this.cpf_complementar
+        return String.format("[%s] %s | %s R$ %.2f | %s: %s (CPF: %s)",
+            this.data, this.tipo_transferencia, (this.is_credito ? "Recebeu" : "Pagou"),
+            Math.abs(this.valor), (this.is_credito ? "Origem" : "Destino"),
+            this.nome_complementar, this.cpf_complementar
         );
     }
 }

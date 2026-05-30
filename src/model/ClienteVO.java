@@ -1,5 +1,6 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ClienteVO {
@@ -11,6 +12,7 @@ public class ClienteVO {
 
     public List<String> emails;
     public List<String> telefones;
+    public List<ContaVO> contas;
 
     public ClienteVO(
         int id_cliente,
@@ -19,7 +21,8 @@ public class ClienteVO {
         String cpf,
         String data_nascimento, 
         List<String> emails, 
-        List<String> telefones
+        List<String> telefones,
+        List<ContaVO> contas
     ) {
         this.id_cliente = id_cliente;
         this.endereco = endereco;
@@ -28,6 +31,7 @@ public class ClienteVO {
         this.data_nascimento = data_nascimento;
         this.emails = emails;
         this.telefones = telefones;
+        this.contas = contas;
     }
 ;
     public int getId() { return id_cliente; }
@@ -37,19 +41,26 @@ public class ClienteVO {
     public String getData_nascimento() { return data_nascimento; }
     public List<String> getEmails(){ return this.emails; }
     public List<String> getTelefones(){ return this.telefones; }
+    public List<ContaVO> getContas(){ return this.contas; }
 
     @Override
     public String toString(){
+        List<String> listaCompactaContas = new ArrayList<>();
+        for(ContaVO c : contas) listaCompactaContas.add(c.compactList());
+        
         return String.format(
-            "=== CLIENTE [#%d] ===\n" +
+            "\n=== CLIENTE [#%d] ===\n" +
             "Nome: %s | CPF: %s | Nascimento: %s\n" +
-            "Contatos: %s | E-mails: %s\n" +
-            "Endereço: %s\n" +
-            "========================",
+            "Telefone(s): \n%s\n" + 
+            "E-mail(s):\n%s\n" +
+            "Endereço:\n%s\n" +
+            "Contas:\n%s\n" +
+            "========================\n",
             id_cliente, nome_completo, cpf, data_nascimento,
-            ((emails != null && !emails.isEmpty()) ? String.join(", ", emails) : "Nenhum e-mail"),
-            ((telefones != null && !telefones.isEmpty()) ? String.join(", ", telefones) : "Nenhum telefone"),   
-            ((endereco != null) ? endereco.toString() : "Endereço não cadastrado")
+            String.join("\n", telefones),   
+            String.join("\n", emails),
+            endereco,
+            String.join("\n", listaCompactaContas)
         );
     }
 }

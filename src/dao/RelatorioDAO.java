@@ -7,8 +7,6 @@ import model.ContaVO;
 import model.TransferenciasVO;
 import model.InvestimentosVO;
 import model.Endereco;
-import model.Agencia;
-import model.Banco;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +27,9 @@ public class RelatorioDAO {
             pstmt.setInt(1, id);
             rs = pstmt.executeQuery();
         } catch (Exception e) { 
+            System.err.println("erro ao executar query.");
+            System.err.println("sql string: SELECT * FROM " + target + " WHERE " + param + " = " + id);
+
             e.printStackTrace(); 
         }
 
@@ -37,7 +38,6 @@ public class RelatorioDAO {
 
     public static ContaVO getContaByID(int id_conta) {
         ContaVO conta = null;
-
         ResultSet rs = select("vw_Resumo_Contas", "id_Conta", id_conta);
 
         if (rs == null) {
@@ -47,32 +47,14 @@ public class RelatorioDAO {
 
         try {
             if(rs.next()){
-                int id_agencia = rs.getInt("id_Agencia");
-                
-                Banco banco = new Banco(
-                    rs.getString("nome_Banco"),
-                    rs.getString("CNPJ_Banco")
-                );
-
-                Agencia ag = new Agencia(
-                    id_agencia,
-                    banco, 
-                    rs.getBoolean("is_Virtual"), 
-                    null
-                );
-
-
-
-                ClienteVO titular = new ClienteVO(
-                    0, null, 
-                    rs.getString("Titular_Conta"), rs.getString("CPF"), "", 
-                    null, null
-                );
-
                 conta = new ContaVO(
                     rs.getInt("id_Conta"),
-                    ag,
-                    titular
+                    rs.getInt("id_Agencia"),
+                    rs.getString("nome_Banco"),
+                    rs.getString("CNPJ_Banco"),
+                    rs.getString("Titular_Conta"), 
+                    rs.getString("CPF"),
+                    rs.getFloat("Saldo")
                 );
             } else {
                 System.err.println("Nenhuma conta cadastrada com esse ID!");
@@ -87,9 +69,10 @@ public class RelatorioDAO {
     public static ClienteVO getClienteByID(int id_cliente) {
         ClienteVO cliente = null;
 
-        ResultSet rsPerfil = select("vw_Perfil_Cliente", "id_cliente", id_cliente);
-        ResultSet rsEmails = select("vw_Emails_Clientes", "id_cliente", id_cliente);
-        ResultSet rsTelefones = select("vw_Telefones_Clientes", "id_cliente", id_cliente);
+        ResultSet rsPerfil = select("vw_Perfil_Cliente", "id_Cliente", id_cliente);
+        ResultSet rsEmails = select("vw_Emails_Clientes", "id_Cliente", id_cliente);
+        ResultSet rsTelefones = select("vw_Telefones_Clientes", "id_Cliente", id_cliente);
+        ResultSet rsContas = select("vw_Resumo_Contas", "id_Cliente", id_cliente);
 
         if(rsPerfil == null) {
             System.err.println("erro ao pesquisar cliente");
@@ -117,6 +100,19 @@ public class RelatorioDAO {
 
                     telefones.add("(" + ddd + ") " + numero);
                 }
+            
+                List<ContaVO> contas = new ArrayList<>();
+                while(rsContas.next()){
+                    contas.add(new ContaVO(
+                        rsContas.getInt("id_Conta"),
+                        rsContas.getInt("id_Agencia"),
+                        rsContas.getString("nome_Banco"), 
+                        rsContas.getString("CNPJ_banco"),
+                        rsContas.getString("Titular_Conta"), 
+                        rsContas.getString("CPF"),
+                        rsContas.getFloat("Saldo")
+                    ));
+                }
 
                 cliente = new ClienteVO(
                     rsPerfil.getInt("id_Cliente"),
@@ -125,8 +121,10 @@ public class RelatorioDAO {
                     rsPerfil.getString("CPF"),
                     rsPerfil.getString("DataDeNascimento"),
                     emails,
-                    telefones
+                    telefones,
+                    contas
                 );
+
             } else {
                 System.err.println("Nenhum cliente cadastrado com esse ID!");
             }
@@ -137,10 +135,10 @@ public class RelatorioDAO {
         return cliente;
     }
 
-    public static List<TransferenciasVO> getTransferenciasByClienteID(int id_cliente){
+    public static List<TransferenciasVO> getTransferenciasByContaID(int id_conta){
         List<TransferenciasVO> transferencias = new ArrayList<>();
         
-        ResultSet rs = select("vw_Extrato_Conta", "id_cliente", id_cliente);
+        ResultSet rs = select("vw_Extrato_Conta", "id_Conta", id_conta);
 
         if (rs == null) {
             System.err.println("erro ao pesquisar transferencias");
@@ -157,8 +155,7 @@ public class RelatorioDAO {
                     rs.getString("Data_Transacao"),
                     rs.getFloat("Valor"),
                     rs.getString("Nome_Destinatario_Remetente"),
-                    rs.getString("CPF_Destinatario_Remetente"),
-                    null
+                    rs.getString("CPF_Destinatario_Remetente")
                 ));
             }
         } catch (Exception e){ 
@@ -168,26 +165,26 @@ public class RelatorioDAO {
         return transferencias;
     }
 
-    public static List<InvestimentosVO> getInvestimentosByClienteID(int id_cliente){
-        List<InvestimentosVO> investimentos = new ArrayList<>();
-
-        ResultSet rs = select("vw_Investimentos_Ativos", "id_Cliente", id_cliente);
+    public static List<InvestimentosVO> getInvestimentosByContaID(int id_conta){
+        ContaVO conta = getContaByID(id_conta);
+        if (conta == null) return null;
         
-        if (rs == null) {
+        List<InvestimentosVO> investimentos = new ArrayList<>();
+        ResultSet rsInv = select("vw_Investimentos_Ativos", "id_Conta", id_conta);
+        
+        if (rsInv == null) {
             System.err.println("erro ao pesquisar investimentos");
             return null;
         }
 
         try {
-            while(rs.next()){
+            while(rsInv.next()){
                 InvestimentosVO inv = new InvestimentosVO(
-                    null, 
-                    rs.getString("Categoria_Investimento"),
-                    rs.getFloat("Valor_Inicial"),
-                    rs.getString("Data_inicial"),
-                    rs.getFloat("Valor_Atual"),
-                    true,
-                    null 
+                    conta, 
+                    rsInv.getString("Categoria_Investimento"),
+                    rsInv.getFloat("Valor_Inicial"),
+                    rsInv.getString("Data_inicial"),
+                    rsInv.getFloat("Valor_Atual")
                 );
                     
                 investimentos.add(inv);
@@ -200,32 +197,22 @@ public class RelatorioDAO {
     }
 
     public static void main(String[] args) {
-        // TODO: melhorar toString views
-        // TODO: getTransferenciasByClienteID -> getTransferenciasByContaID
-        // TODO: getInvestimentosByClienteID -> getInvestimentosByContaID
-
         int id_cliente = 1;
-        System.out.println("teste cliente id_cliente="+id_cliente);
-        System.out.println();
-        System.out.println(getClienteByID(id_cliente)+"\n");
+        System.out.println("teste cliente (id_cliente="+id_cliente+")");
+        System.out.println(getClienteByID(id_cliente));
         
         int id_conta = 101;
-        System.out.println("teste contna id_conta="+id_conta);
-        System.out.println();
-        System.out.println(getContaByID(id_conta)+"\n");
+        System.out.println("teste conta (id_conta=" + id_conta + "):");
+        System.out.println(getContaByID(id_conta));
 
-        System.out.println("teste transferencias id_cliente="+id_cliente);
-        System.out.println();
-        List<TransferenciasVO> transferencias = getTransferenciasByClienteID(id_cliente);
+        System.out.println("teste transferencias (id_conta=" + id_conta + "):");
+        List<TransferenciasVO> transferencias = getTransferenciasByContaID(id_conta);
         for(TransferenciasVO t : transferencias)
             System.out.println(t);
-        System.out.println();
 
-        System.out.println("teste investimentos id_cliente="+id_cliente);
-        System.out.println();
-        List<InvestimentosVO> investimentos = getInvestimentosByClienteID(id_cliente);
+        System.out.println("\nteste investimentos (id_conta=" + id_conta + "):");
+        List<InvestimentosVO> investimentos = getInvestimentosByContaID(id_conta);
         for(InvestimentosVO i : investimentos)
             System.out.println(i);
     }
-
 }
