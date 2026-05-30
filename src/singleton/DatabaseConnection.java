@@ -10,13 +10,16 @@ public class DatabaseConnection {
     private static final String db_name = "sql10828677";
     private static final String user = "sql10828677";
     private static final String password = "xeNnJBxDck";
-    private static final String db_connect_string = "jdbc:mysql://" + host + ":" + port + "/" + db_name + 
-            "?verifyServerCertificate=false" +
-            "&useSSL=false" +
-            "&requireSSL=false" +
-            "&useTimezone=true" +
-            "&serverTimezone=UTC" +
-            "&allowPublicKeyRetrieval=true";
+
+    private static final String db_connect_string = String.format(
+        "jdbc:mysql://%s:%s/%s" + 
+        "?verifyServerCertificate=false" +
+        "&useSSL=false" +
+        "&requireSSL=false" +
+        "&useTimezone=true" +
+        "&serverTimezone=UTC" +
+        "&allowPublicKeyRetrieval=true", host, port, db_name
+    );
 
     private DatabaseConnection(){}
 
