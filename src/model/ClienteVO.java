@@ -51,9 +51,10 @@ public class ClienteVO {
         return String.format(
             "\n=== CLIENTE [#%d] ===\n" +
             "Nome: %s | CPF: %s | Nascimento: %s\n" +
-            "Telefone(s): \n%s\n" + 
-            "E-mail(s):\n%s\n" +
-            "Endereço:\n%s\n" +
+            "Telefone(s): %s\n" + 
+            "E-mail(s):%s\n" +
+            "Endereço:%s\n" +
+            "------------------------\n" +
             "Contas:\n%s\n" +
             "========================\n",
             id_cliente, nome_completo, cpf, data_nascimento,
@@ -61,6 +62,13 @@ public class ClienteVO {
             String.join("\n", emails),
             endereco,
             String.join("\n", listaCompactaContas)
+        );
+    }
+
+    public String compactPrint(){
+        return String.format(
+            "ID: %d | %s",
+            id_cliente, nome_completo
         );
     }
 }

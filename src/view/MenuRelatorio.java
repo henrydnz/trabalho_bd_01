@@ -1,14 +1,13 @@
 package view;
 
-import dao.RelatorioDAO;
-
-import model.TransferenciasVO;
-import model.InvestimentosVO;
-import model.ClienteVO;
-import model.ContaVO;
-
 import java.util.List;
 import java.util.Scanner;
+
+import dao.RelatorioDAO;
+import model.ClienteVO;
+import model.ContaVO;
+import model.InvestimentosVO;
+import model.TransferenciasVO;
 
 public class MenuRelatorio {
     private static Scanner scanner = new Scanner(System.in);
@@ -34,6 +33,9 @@ public class MenuRelatorio {
                 case 4:
                     opcaoInfoConta();
                     break;
+                case 5:
+                    opcaoTodosClientes();
+                    break;
                 case 0:
                     break;
                 default:
@@ -46,6 +48,8 @@ public class MenuRelatorio {
     }
 
     private static void exibirMenu() {
+        limparTela();
+
         System.out.println("\n========================================\n");
         System.out.println("             SISTEMA BANCÁRIO\n");
         System.out.println("----------------------------------------");
@@ -53,13 +57,13 @@ public class MenuRelatorio {
         System.out.println("2. Ver investimentos da conta");
         System.out.println("3. Buscar cliente por ID");
         System.out.println("4. Ver informações da conta");
+        System.out.println("5. Ver Lista de Clientes");
         System.out.println("0. Sair");
         System.out.println("========================================\n");
     }
     
     private static void opcaoTransacoes() {
-        clear_screen();
-
+        limparTela();
         System.out.println("\n ----- Transacoes DA CONTA -----");
 
         int idConta = lerInteiro("Digite o número da conta: ");
@@ -70,11 +74,12 @@ public class MenuRelatorio {
 
         for (TransferenciasVO item : transacoes) 
             System.out.println(item);
+
+        esperarEnter();
     }
     
     private static void opcaoInvestimentos() {
-        clear_screen();
-
+        limparTela();
         System.out.println("\n--- INVESTIMENTOS DA CONTA ---");
 
         int idConta = lerInteiro("Digite o ID da conta: ");
@@ -85,11 +90,12 @@ public class MenuRelatorio {
 
         for (InvestimentosVO item : investimentos) 
             System.out.println(item);
+
+        esperarEnter();
     }
     
     private static void opcaoBuscarCliente() {
-        clear_screen();
-
+        limparTela();
         System.out.println("\n--- BUSCAR CLIENTE ---");
         
         int idCliente = lerInteiro("Digite o ID do Cliente:");
@@ -99,11 +105,12 @@ public class MenuRelatorio {
         if(cliente == null) return;
 
         System.out.println(cliente);
+
+        esperarEnter();
     }
     
     private static void opcaoInfoConta() {
-        clear_screen();
-        
+        limparTela();
         int idConta = lerInteiro("Digite o ID da Conta: ");
         
         System.out.println("\n--- BUSCAR CONTA ---");
@@ -113,7 +120,24 @@ public class MenuRelatorio {
         if(conta == null) return;
 
         System.out.println(conta);
+
+        esperarEnter();
     }
+
+     private static void opcaoTodosClientes() {
+        limparTela();
+        System.out.println("\n--- LISTA DE CLIENTES ---");
+
+        List<ClienteVO> clientes = RelatorioDAO.getClientes();
+
+        if(clientes == null) return;
+
+        for (ClienteVO item : clientes) 
+            System.out.println(item.compactPrint());
+
+        esperarEnter();
+    }
+    
     
     private static int lerInteiro(String mensagem) {
         System.out.print(mensagem);
@@ -122,7 +146,7 @@ public class MenuRelatorio {
             scanner.next();
         }
         int valor = scanner.nextInt();
-        scanner.nextLine(); // limpa o buffer
+        scanner.nextLine();
         return valor;
     }
 
@@ -143,4 +167,17 @@ public class MenuRelatorio {
             System.out.println();
         }
     }
+
+    private static void esperarEnter() {
+    System.out.print("\nPressione ENTER para continuar...");
+    scanner.nextLine();
+}
+
+    private static void limparTela() {
+    try {
+        new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+    } catch (Exception e) {
+        System.out.println("Erro ao limpar tela: " + e.getMessage());
+    }
+}
 }

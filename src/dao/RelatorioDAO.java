@@ -1,19 +1,21 @@
 package dao;
 
-import singleton.DatabaseConnection;
-
-import model.ClienteVO;
-import model.ContaVO;
-import model.TransferenciasVO;
-import model.InvestimentosVO;
-import model.Endereco;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.mysql.cj.protocol.Resultset;
+
+import model.ClienteVO;
+import model.ContaVO;
+import model.Endereco;
+import model.InvestimentosVO;
+import model.TransferenciasVO;
+import singleton.DatabaseConnection;
 
 public class RelatorioDAO {
     private static Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -172,6 +174,8 @@ public class RelatorioDAO {
     public static List<InvestimentosVO> getInvestimentosByContaID(int id_conta){
         ContaVO conta = getContaByID(id_conta);
         if (conta == null) return null;
+
+        // SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         
         List<InvestimentosVO> investimentos = new ArrayList<>();
         ResultSet rsInv = select("vw_Investimentos_Ativos", "id_Conta", id_conta);
@@ -191,6 +195,7 @@ public class RelatorioDAO {
                     conta, 
                     rsInv.getString("Categoria_Investimento"),
                     rsInv.getFloat("Valor_Inicial"),
+                    // sdf.format(rsInv.getTimestamp("Data_inicial")),
                     rsInv.getString("Data_inicial"),
                     rsInv.getFloat("Valor_Atual")
                 );
@@ -203,6 +208,33 @@ public class RelatorioDAO {
 
         return investimentos;
     }
+
+    public static List<ClienteVO> getClientes() {
+        List<ClienteVO> clientes = new ArrayList<>();
+        String sql = "SELECT * FROM vw_Perfil_Cliente";
+
+        try {
+            ResultSet rs;
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+            while(rs.next()) {
+                clientes.add( new ClienteVO(
+                    rs.getInt("id_Cliente"),
+                    null,
+                    rs.getString("Nome_Completo"),
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+            ));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return clientes;
+    }      
 
     public static void main(String[] args) {
         int id_cliente = 1;
