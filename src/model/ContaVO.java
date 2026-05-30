@@ -46,7 +46,7 @@ public class ContaVO {
     public String toString(){
         return String.format(
             "\nID: %05d | %s (CNPJ: %s) - Agência: %d\n" + 
-            "Titular: %s (CPF: %s) | Saldo Disponível: R$ %.2f\n",
+            "Titular: %s (CPF: %s) | Saldo Disponível: R$ %.2f",
             id_conta, nome_banco, cnpj_banco, id_agencia, 
             nome_titular, cpf_titular, saldo
         );

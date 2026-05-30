@@ -49,14 +49,14 @@ public class ClienteVO {
         for(ContaVO c : contas) listaCompactaContas.add(c.compactList());
         
         return String.format(
-            "\n=== CLIENTE [#%d] ===\n" +
+            "\n========================= CLIENTE #%d ==========================\n" +
             "Nome: %s | CPF: %s | Nascimento: %s\n" +
             "Telefone(s): %s\n" + 
-            "E-mail(s):%s\n" +
-            "Endereço:%s\n" +
-            "------------------------\n" +
+            "E-mail(s): %s\n" +
+            "Endereço: %s\n" +
+            "----------------------------------------------------------------\n" +
             "Contas:\n%s\n" +
-            "========================\n",
+            "================================================================\n",
             id_cliente, nome_completo, cpf, data_nascimento,
             String.join("\n", telefones),   
             String.join("\n", emails),

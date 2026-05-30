@@ -50,59 +50,61 @@ public class MenuRelatorio {
     private static void exibirMenu() {
         limparTela();
 
-        System.out.println("\n========================================\n");
-        System.out.println("             SISTEMA BANCÁRIO\n");
+        System.out.println("\n========================================");
+        System.out.println("             SISTEMA BANCARIO");
         System.out.println("----------------------------------------");
         System.out.println("1. Ver Transacoes da conta");
         System.out.println("2. Ver investimentos da conta");
         System.out.println("3. Buscar cliente por ID");
-        System.out.println("4. Ver informações da conta");
+        System.out.println("4. Ver informacoes da conta");
         System.out.println("5. Ver Lista de Clientes");
         System.out.println("0. Sair");
         System.out.println("========================================\n");
     }
     
     private static void opcaoTransacoes() {
+        int idConta = lerInteiro("Digite o numero da conta: ");
         limparTela();
-        System.out.println("\n ----- Transacoes DA CONTA -----");
-
-        int idConta = lerInteiro("Digite o número da conta: ");
-
+        
         List<TransferenciasVO> transacoes = RelatorioDAO.getTransferenciasByContaID(idConta);
-
-        if(transacoes == null) return;
+        
+        if(transacoes == null) {esperarEnter(); return;}
+        
+        System.out.println(String.format("\n========================= EXTRATO (CONTA #%d) =========================\n", idConta));
 
         for (TransferenciasVO item : transacoes) 
             System.out.println(item);
 
+        System.out.println("\n========================================================================\n");
+        
         esperarEnter();
     }
     
     private static void opcaoInvestimentos() {
-        limparTela();
-        System.out.println("\n--- INVESTIMENTOS DA CONTA ---");
-
         int idConta = lerInteiro("Digite o ID da conta: ");
+        limparTela();
         
         List<InvestimentosVO> investimentos = RelatorioDAO.getInvestimentosByContaID(idConta);
-
-        if(investimentos == null) return;
+        
+        if(investimentos == null) {esperarEnter(); return;}
+        
+        System.out.println(String.format("\n========================= INVESTIMENTOS (CONTA #%d) =========================\n", idConta));
 
         for (InvestimentosVO item : investimentos) 
             System.out.println(item);
+
+        System.out.println("\n==============================================================================\n");
 
         esperarEnter();
     }
     
     private static void opcaoBuscarCliente() {
-        limparTela();
-        System.out.println("\n--- BUSCAR CLIENTE ---");
-        
         int idCliente = lerInteiro("Digite o ID do Cliente:");
-        
+        limparTela();
+                
         ClienteVO cliente = RelatorioDAO.getClienteByID(idCliente);
 
-        if(cliente == null) return;
+        if(cliente == null) {esperarEnter(); return;}
 
         System.out.println(cliente);
 
@@ -110,39 +112,42 @@ public class MenuRelatorio {
     }
     
     private static void opcaoInfoConta() {
-        limparTela();
         int idConta = lerInteiro("Digite o ID da Conta: ");
-        
-        System.out.println("\n--- BUSCAR CONTA ---");
+        limparTela();
         
         ContaVO conta = RelatorioDAO.getContaByID(idConta);
-
-        if(conta == null) return;
+        
+        if(conta == null) {esperarEnter(); return;}
+        
+        System.out.println(String.format("\n========================= CONTA #%d =========================", idConta));
 
         System.out.println(conta);
 
+        System.out.println("\n==============================================================\n");
+        
         esperarEnter();
     }
 
-     private static void opcaoTodosClientes() {
-        limparTela();
-        System.out.println("\n--- LISTA DE CLIENTES ---");
-
-        List<ClienteVO> clientes = RelatorioDAO.getClientes();
-
-        if(clientes == null) return;
+    private static void opcaoTodosClientes() {
+         limparTela();
+         List<ClienteVO> clientes = RelatorioDAO.getClientes();
+         
+         if(clientes == null) {esperarEnter(); return;}
+         
+         System.out.println("\n===== LISTA DE CLIENTES =====\n");
 
         for (ClienteVO item : clientes) 
             System.out.println(item.compactPrint());
 
+        System.out.println("\n=============================\n");
+        
         esperarEnter();
     }
-    
     
     private static int lerInteiro(String mensagem) {
         System.out.print(mensagem);
         while (!scanner.hasNextInt()) {
-            System.out.println("Digite um número válido!");
+            System.out.println("Digite um numero válido!");
             scanner.next();
         }
         int valor = scanner.nextInt();
@@ -162,11 +167,11 @@ public class MenuRelatorio {
     //     return valor.trim();
     // }
 
-    private static void clear_screen(){
-        for (int i = 0; i < 50; i++) {
-            System.out.println();
-        }
-    }
+    // private static void clear_screen(){
+    //     for (int i = 0; i < 50; i++) {
+    //         System.out.println();
+    //     }
+    // }
 
     private static void esperarEnter() {
     System.out.print("\nPressione ENTER para continuar...");
