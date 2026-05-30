@@ -1,28 +1,19 @@
 package view;
 
-// Trocar pelos Model
 import dao.RelatorioDAO;
-import model.TransacoesVO;
+
+import model.TransferenciasVO;
 import model.InvestimentosVO;
 import model.ClienteVO;
-import model.ContaInfoVO;
+import model.ContaVO;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Scanner;
 
 public class MenuRelatorio {
-    
-    private static RelatorioDAO relatorioDAO = new RelatorioDAO();
-    
     private static Scanner scanner = new Scanner(System.in);
-    private static SimpleDateFormat formatadorData = new SimpleDateFormat("dd/MM/yyyy");
-    private static SimpleDateFormat formatadorDataHora = new SimpleDateFormat("dd/MM/yyyy HH:mm");
     
     public static void main(String[] args) {
-        System.out.println("========================================\n");
-        System.out.println("             SISTEMA BANCÁRIO\n");
-        System.out.println("========================================\n");
         
         int opcao;
 
@@ -55,57 +46,71 @@ public class MenuRelatorio {
     }
 
     private static void exibirMenu() {
+        System.out.println("\n========================================\n");
+        System.out.println("             SISTEMA BANCÁRIO\n");
         System.out.println("----------------------------------------");
         System.out.println("1. Ver Transacoes da conta");
-        System.out.println("2. Ver investimentos do cliente");
-        System.out.println("3. Buscar cliente por nome");
+        System.out.println("2. Ver investimentos da conta");
+        System.out.println("3. Buscar cliente por ID");
         System.out.println("4. Ver informações da conta");
         System.out.println("0. Sair");
-        System.out.println("----------------------------------------");
+        System.out.println("========================================\n");
     }
     
     private static void opcaoTransacoes() {
-        
-        int idConta = lerInteiro("Digite o número da conta: ");
-        
+        clear_screen();
+
         System.out.println("\n ----- Transacoes DA CONTA -----");
 
-        List<TransacoesVO> transacoes = relatorioDAO.buscarTransacoesPorConta(idConta);
-        
-        for (TransacoesVO item : transacoes) {
-            System.out.println(item);
-        }
+        int idConta = lerInteiro("Digite o número da conta: ");
 
+        List<TransferenciasVO> transacoes = RelatorioDAO.getTransferenciasByContaID(idConta);
+
+        if(transacoes == null) return;
+
+        for (TransferenciasVO item : transacoes) 
+            System.out.println(item);
     }
     
     private static void opcaoInvestimentos() {
-        int idCliente = lerInteiro("Digite o ID do cliente: ");
+        clear_screen();
+
+        System.out.println("\n--- INVESTIMENTOS DA CONTA ---");
+
+        int idConta = lerInteiro("Digite o ID da conta: ");
         
-        System.out.println("\n--- INVESTIMENTOS DO CLIENTE ---");
-        
-        List<InvestimentosVO> investimentos = relatorioDAO.buscarInvestimentosPorConta(idCliente);
-        
-        for (InvestimentosVO item : investimentos) {
+        List<InvestimentosVO> investimentos = RelatorioDAO.getInvestimentosByContaID(idConta);
+
+        if(investimentos == null) return;
+
+        for (InvestimentosVO item : investimentos) 
             System.out.println(item);
-        }
     }
     
     private static void opcaoBuscarCliente() {
+        clear_screen();
+
         System.out.println("\n--- BUSCAR CLIENTE ---");
         
-        String nome = lerString("Digite o nome do Cliente:");
+        int idCliente = lerInteiro("Digite o ID do Cliente:");
         
-        ClienteVO cliente = relatorioDAO.buscarClientePorNome(nome);
+        ClienteVO cliente = RelatorioDAO.getClienteByID(idCliente);
+
+        if(cliente == null) return;
 
         System.out.println(cliente);
     }
     
     private static void opcaoInfoConta() {
+        clear_screen();
+        
         int idConta = lerInteiro("Digite o ID da Conta: ");
         
         System.out.println("\n--- BUSCAR CONTA ---");
         
-        ContaVO conta = relatorioDAO.buscarContaPorId(idConta);
+        ContaVO conta = RelatorioDAO.getContaByID(idConta);
+
+        if(conta == null) return;
 
         System.out.println(conta);
     }
@@ -121,15 +126,21 @@ public class MenuRelatorio {
         return valor;
     }
 
-    private static String lerString(String mensagem) {
-    System.out.print(mensagem);
-    String valor = scanner.nextLine();
-    
-    while (valor.trim().isEmpty()) {
-        System.out.println("Nome não pode ser vazio!");
-        valor = scanner.nextLine();
+    // private static String lerString(String mensagem) {
+    //     System.out.print(mensagem);
+    //     String valor = scanner.nextLine();
+        
+    //     while (valor.trim().isEmpty()) {
+    //         System.out.println("Nome não pode ser vazio!");
+    //         valor = scanner.nextLine();
+    //     }
+
+    //     return valor.trim();
+    // }
+
+    private static void clear_screen(){
+        for (int i = 0; i < 50; i++) {
+            System.out.println();
+        }
     }
-    
-    return valor.trim();
-}
 }

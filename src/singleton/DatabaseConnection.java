@@ -32,7 +32,7 @@ public class DatabaseConnection {
     private Connection conn = null;
 
     public void connect(){
-        System.out.println("EXECUTANDO CONEXAO COM O BANCO DE DADOS...\n");
+        System.out.print("\nEXECUTANDO CONEXAO COM O BANCO DE DADOS... ");
         
         try{
             Class.forName("com.mysql.cj.jdbc.Driver");

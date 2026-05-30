@@ -41,24 +41,24 @@ public class RelatorioDAO {
         ResultSet rs = select("vw_Resumo_Contas", "id_Conta", id_conta);
 
         if (rs == null) {
-            System.err.println("erro ao pesquisar conta");
+            System.err.println("erro ao pesquisar conta.");
             return null;
         }
 
         try {
-            if(rs.next()){
-                conta = new ContaVO(
-                    rs.getInt("id_Conta"),
-                    rs.getInt("id_Agencia"),
-                    rs.getString("nome_Banco"),
-                    rs.getString("CNPJ_Banco"),
-                    rs.getString("Titular_Conta"), 
-                    rs.getString("CPF"),
-                    rs.getFloat("Saldo")
-                );
-            } else {
+            if(!rs.next()) {
                 System.err.println("Nenhuma conta cadastrada com esse ID!");
-            }
+                return null;
+            } 
+            conta = new ContaVO(
+                rs.getInt("id_Conta"),
+                rs.getInt("id_Agencia"),
+                rs.getString("nome_Banco"),
+                rs.getString("CNPJ_Banco"),
+                rs.getString("Titular_Conta"), 
+                rs.getString("CPF"),
+                rs.getFloat("Saldo")
+            );
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -80,54 +80,54 @@ public class RelatorioDAO {
         }
 
         try {
-            if (rsPerfil.next()) {
-                Endereco endereco = new Endereco(
-                    rsPerfil.getString("nome_Rua"),
-                    rsPerfil.getString("nome_Bairro"),
-                    rsPerfil.getString("nome_Cidade"),
-                    rsPerfil.getString("nome_Estado")
-                );
-
-                List<String> emails = new ArrayList<>();
-                while (rsEmails.next()) { 
-                    emails.add(rsEmails.getString("Email_Cliente"));
-                }
-                
-                List<String> telefones = new ArrayList<>();
-                while (rsTelefones.next()) {
-                    String ddd = rsTelefones.getString("DDD");
-                    String numero = rsTelefones.getString("Telefone");
-
-                    telefones.add("(" + ddd + ") " + numero);
-                }
-            
-                List<ContaVO> contas = new ArrayList<>();
-                while(rsContas.next()){
-                    contas.add(new ContaVO(
-                        rsContas.getInt("id_Conta"),
-                        rsContas.getInt("id_Agencia"),
-                        rsContas.getString("nome_Banco"), 
-                        rsContas.getString("CNPJ_banco"),
-                        rsContas.getString("Titular_Conta"), 
-                        rsContas.getString("CPF"),
-                        rsContas.getFloat("Saldo")
-                    ));
-                }
-
-                cliente = new ClienteVO(
-                    rsPerfil.getInt("id_Cliente"),
-                    endereco,
-                    rsPerfil.getString("Nome_Completo"),
-                    rsPerfil.getString("CPF"),
-                    rsPerfil.getString("DataDeNascimento"),
-                    emails,
-                    telefones,
-                    contas
-                );
-
-            } else {
+            if (!rsPerfil.next()){
                 System.err.println("Nenhum cliente cadastrado com esse ID!");
+                return null;
+            } 
+            Endereco endereco = new Endereco(
+                rsPerfil.getString("nome_Rua"),
+                rsPerfil.getString("nome_Bairro"),
+                rsPerfil.getString("nome_Cidade"),
+                rsPerfil.getString("nome_Estado")
+            );
+
+            List<String> emails = new ArrayList<>();
+            while (rsEmails.next()) { 
+                emails.add(rsEmails.getString("Email_Cliente"));
             }
+            
+            List<String> telefones = new ArrayList<>();
+            while (rsTelefones.next()) {
+                String ddd = rsTelefones.getString("DDD");
+                String numero = rsTelefones.getString("Telefone");
+
+                telefones.add("(" + ddd + ") " + numero);
+            }
+        
+            List<ContaVO> contas = new ArrayList<>();
+            while(rsContas.next()){
+                contas.add(new ContaVO(
+                    rsContas.getInt("id_Conta"),
+                    rsContas.getInt("id_Agencia"),
+                    rsContas.getString("nome_Banco"), 
+                    rsContas.getString("CNPJ_banco"),
+                    rsContas.getString("Titular_Conta"), 
+                    rsContas.getString("CPF"),
+                    rsContas.getFloat("Saldo")
+                ));
+            }
+
+            cliente = new ClienteVO(
+                rsPerfil.getInt("id_Cliente"),
+                endereco,
+                rsPerfil.getString("Nome_Completo"),
+                rsPerfil.getString("CPF"),
+                rsPerfil.getString("DataDeNascimento"),
+                emails,
+                telefones,
+                contas
+            );
+        
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -146,7 +146,11 @@ public class RelatorioDAO {
         }
 
         try {
-            while(rs.next()){
+            if (!rs.next()){
+                System.err.println("Nenhuma conta com esse ID!");
+                return null;
+            }
+            do {
                 transferencias.add(new TransferenciasVO(
                     null, 
                     rs.getString("Tipo_Operacao"),
@@ -157,7 +161,7 @@ public class RelatorioDAO {
                     rs.getString("Nome_Destinatario_Remetente"),
                     rs.getString("CPF_Destinatario_Remetente")
                 ));
-            }
+            } while(rs.next());
         } catch (Exception e){ 
             e.printStackTrace(); 
         }
@@ -178,7 +182,11 @@ public class RelatorioDAO {
         }
 
         try {
-            while(rsInv.next()){
+            if(!rsInv.next()){
+                System.err.println("Nehuma conta com esse ID!");
+                return null;
+            }
+            do {
                 InvestimentosVO inv = new InvestimentosVO(
                     conta, 
                     rsInv.getString("Categoria_Investimento"),
@@ -188,7 +196,7 @@ public class RelatorioDAO {
                 );
                     
                 investimentos.add(inv);
-            }
+            } while(rsInv.next());
         } catch (Exception e) {
             e.printStackTrace();
         }
